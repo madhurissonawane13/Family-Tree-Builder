@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Tree Builder - Step by Step</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 25px;
+            height: 95vh;
+        }
+
+        /* Form Panel */
+        .form-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            animation: slideInLeft 0.8s ease-out;
+        }
+
+        .form-panel h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 28px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #34495e;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .input-field, select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e6ed;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+
+        .input-field:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Photo Upload */
+        .photo-upload {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8fafc;
+            margin-bottom: 20px;
+        }
+
+        .photo-upload:hover {
+            border-color: #764ba2;
+            background: #edf2f7;
+            transform: translateY(-3px);
+        }
+
+        .photo-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            display: none;
+            margin: 0 auto;
+        }
+
+        .upload-text {
+            color: #7f8c8d;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 18px;
+            width: 100%;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Tree Panel */
+        .tree-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            animation: slideInRight 0.8s ease-out;
+        }
+
+        .tree-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .tree-header h2 {
+            color: #2c3e50;
+            font-size: 28px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Tree Controls */
+        .tree-controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .control-btn {
+            padding: 12px 20px;
+            background: #edf2f7;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        /* Empty Tree State */
+        .empty-tree {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #7f8c8d;
+            padding: 40px;
+        }
+
+        .empty-tree i {
+            font-size: 80px;
+            color: #667eea;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-tree h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .empty-tree p {
+            font-size: 16px;
+            max-width: 400px;
+            line-height: 1.6;
+        }
+
+        /* Tree Container */
+        .tree-container {
+            flex: 1;
+            position: relative;
+            overflow: auto;
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 40px;
+            border: 3px solid #e0e6ed;
+            display: none; /* Hidden by default */
+        }
+
+        .tree-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-height: 500px;
+        }
+
+        /* Tree Node */
+        .tree-node {
+            position: absolute;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 200px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 4px solid;
+            z-index: 10;
+            animation: nodeAppear 0.6s ease-out;
+        }
+
+        .tree-node.male {
+            border-color: #3498db;
+            background: linear-gradient(135deg, #ffffff 0%, #e3f2fd 100%);
+        }
+
+        .tree-node.female {
+            border-color: #e84393;
+            background: linear-gradient(135deg, #ffffff 0%, #fce4ec 100%);
+        }
+
+        .tree-node:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            z-index: 100;
+        }
+
+        .node-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 4px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .node-name {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+
+        .node-details {
+            color: #7f8c8d;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Tree Lines */
+        .tree-line {
+            position: absolute;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+            z-index: 1;
+            animation: drawLine 0.8s ease-out;
+            transform-origin: left center;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: linear-gradient(45deg, #00b09b, #96c93d);
+            color: white;
+            padding: 18px 28px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 10000;
+            font-weight: 600;
+            animation: slideInRight 0.4s ease-out;
+        }
+
+        .toast.error {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+        }
+
+        /* Stats */
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 25px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0e6ed 100%);
+            border-radius: 15px;
+            border: 2px solid #dfe6e9;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            font-weight: 600;
+        }
+
+        /* Animation Keyframes */
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes nodeAppear {
+            0% {
+                opacity: 0;
+                transform: scale(0) rotate(-10deg);
+            }
+            70% {
+                transform: scale(1.1) rotate(5deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        @keyframes drawLine {
+            0% {
+                width: 0;
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            
+            .tree-panel {
+                min-height: 600px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Left: Add Member Form -->
+        <div class="form-panel">
+            <h2>🌳 Family Tree Builder</h2>
+            <p class="subtitle">Build your tree step by step</p>
+            
+            <form id="familyForm">
+                <div class="form-group">
+                    <label>Photo (Optional)</label>
+                    <div class="photo-upload" onclick="document.getElementById('photo').click()">
+                        <img id="photoPreview" class="photo-preview" alt="Preview">
+                        <div class="upload-text">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
+                            <span>Click to upload photo</span>
+                        </div>
+                    </div>
+                    <input type="file" id="photo" accept="image/*" style="display:none">
+                </div>
+
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" id="fullName" class="input-field" placeholder="Enter full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Gender *</label>
+                    <select id="gender" class="input-field" required onchange="updateRelationOptions()">
+                        <option value="">Select gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Age *</label>
+                    <input type="number" id="age" class="input-field" min="0" max="120" placeholder="Enter age" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Date of Birth *</label>
+                    <input type="date" id="dob" class="input-field" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Relation *</label>
+                    <select id="relation" class="input-field" required onchange="updateConnectToOptions()">
+                        <option value="">Select relation</option>
+                        <option value="root">Root (First Person)</option>
+                        <option value="spouse">Spouse/Partner</option>
+                        <option value="child">Child</option>
+                        <option value="parent">Parent</option>
+                        <option value="sibling">Sibling</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Connect To *</label>
+                    <select id="connectTo" class="input-field">
+                        <option value="">Select family member</option>
+                    </select>
+                    <small style="color: #7f8c8d; display: block; margin-top: 5px;">
+                        Required for all except "Root"
+                    </small>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-plus-circle"></i>
+                    Add Family Member
+                </button>
+            </form>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalCount">0</div>
+                    <div class="stat-label">Total Members</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="maleCount">0</div>
+                    <div class="stat-label">Male</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="femaleCount">0</div>
+                    <div class="stat-label">Female</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Tree Display -->
+        <div class="tree-panel">
+            <div class="tree-header">
+                <h2><i class="fas fa-project-diagram"></i> Family Tree</h2>
+                <div class="tree-controls">
+                    <button class="control-btn" onclick="zoomIn()">
+                        <i class="fas fa-search-plus"></i> Zoom In
+                    </button>
+                    <button class="control-btn" onclick="zoomOut()">
+                        <i class="fas fa-search-minus"></i> Zoom Out
+                    </button>
+                    <button class="control-btn" onclick="resetTree()">
+                        <i class="fas fa-redo"></i> Reset View
+                    </button>
+                    <button class="control-btn" onclick="saveTree()">
+                        <i class="fas fa-download"></i> Save Tree
+                    </button>
+                </div>
+            </div>
+
+            <!-- Empty Tree State -->
+            <div class="empty-tree" id="emptyTree">
+                <i class="fas fa-tree"></i>
+                <h3>Your Family Tree is Empty</h3>
+                <p>Start building your family tree by adding the first member using the form on the left.</p>
+                <p style="margin-top: 20px; font-size: 14px; color: #667eea;">
+                    <i class="fas fa-lightbulb"></i> Tip: Start with the oldest family member as the "Root"
+                </p>
+            </div>
+
+            <!-- Tree Container (Initially Hidden) -->
+            <div class="tree-container" id="treeContainer">
+                <div class="tree-wrapper" id="treeWrapper">
+                    <!-- Tree will be drawn here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage"></span>
+    </div>
+
+    <script>
+        // ============ FAMILY TREE DATA ============
+        let familyMembers = [];
+        let selectedMember = null;
+        let treeScale = 1;
+        let memberId = 1;
+        
+        // Node dimensions
+        const NODE_WIDTH = 200;
+        const NODE_HEIGHT = 160;
+        const LEVEL_SPACING = 200;
+        const NODE_SPACING = 250;
+
+        // ============ INITIALIZE ============
+        function init() {
+            // Clear any existing data
+            familyMembers = [];
+            memberId = 1;
+            
+            // Update stats
+            updateStats();
+            
+            // Update connect to options
+            updateConnectToOptions();
+            
+            // Show empty tree message
+            showEmptyTree();
+            
+            // Show welcome message
+            setTimeout(() => {
+                showToast("👋 Welcome! Start building your family tree step by step");
+            }, 500);
+        }
+
+        // ============ UPDATE CONNECT TO OPTIONS ============
+        function updateConnectToOptions() {
+            const relation = document.getElementById('relation').value;
+            const connectSelect = document.getElementById('connectTo');
+            connectSelect.innerHTML = '<option value="">Select family member</option>';
+            
+            if (relation === 'root') {
+                connectSelect.disabled = true;
+                connectSelect.value = '';
+            } else {
+                connectSelect.disabled = false;
+                familyMembers.forEach(member => {
+                    const option = document.createElement('option');
+                    option.value = member.id;
+                    option.textContent = `${member.name} (${member.gender.charAt(0).toUpperCase()}, ${member.age}y)`;
+                    connectSelect.appendChild(option);
+                });
+            }
+        }
+
+        // ============ SHOW TOAST ============
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const messageEl = document.getElementById('toastMessage');
+            
+            messageEl.textContent = message;
+            toast.className = `toast ${isError ? 'error' : ''}`;
+            toast.style.display = 'flex';
+            toast.style.alignItems = 'center';
+            toast.style.gap = '10px';
+            
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        // ============ UPDATE STATS ============
+        function updateStats() {
+            document.getElementById('totalCount').textContent = familyMembers.length;
+            document.getElementById('maleCount').textContent = familyMembers.filter(m => m.gender === 'male').length;
+            document.getElementById('femaleCount').textContent = familyMembers.filter(m => m.gender === 'female').length;
+        }
+
+        // ============ SHOW EMPTY TREE ============
+        function showEmptyTree() {
+            document.getElementById('emptyTree').style.display = 'flex';
+            document.getElementById('treeContainer').style.display = 'none';
+        }
+
+        // ============ SHOW TREE VISUALIZATION ============
+        function showTreeVisualization() {
+            document.getElementById('emptyTree').style.display = 'none';
+            document.getElementById('treeContainer').style.display = 'block';
+        }
+
+        // ============ FORM SUBMISSION ============
+        document.getElementById('familyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('fullName').value.trim();
+            const gender = document.getElementById('gender').value;
+            const age = parseInt(document.getElementById('age').value);
+            const dob = document.getElementById('dob').value;
+            const relation = document.getElementById('relation').value;
+            const connectTo = document.getElementById('connectTo').value;
+            
+            // Get photo or use default avatar
+            let photo = document.getElementById('photoPreview').src;
+            if (!photo.includes('data:image')) {
+                // Generate avatar based on gender
+                const avatarColors = {
+                    male: '4A90E2',
+                    female: 'E91E63',
+                    other: '9C27B0'
+                };
+                photo = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=${avatarColors[gender] || '667eea'}&color=fff&size=200`;
+            }
+
+            // Validation
+            if (!name || !gender || isNaN(age) || !dob || !relation) {
+                showToast("Please fill all required fields!", true);
+                return;
+            }
+
+            if (relation !== 'root' && !connectTo) {
+                showToast("Please select a family member to connect to!", true);
+                return;
+            }
+
+            // Create new member
+            const newMember = {
+                id: memberId++,
+                name,
+                gender,
+                age,
+                dob,
+                relation,
+                connectedTo: connectTo ? parseInt(connectTo) : null,
+                photo,
+                x: 0,
+                y: 0
+            };
+
+            // Calculate position
+            calculatePosition(newMember);
+            
+            // Add to family
+            familyMembers.push(newMember);
+            
+            // Update UI
+            updateConnectToOptions();
+            updateStats();
+            renderTree();
+            
+            // Show tree visualization after first member
+            if (familyMembers.length === 1) {
+                showTreeVisualization();
+                showToast("🎉 First family member added! Now add their spouse, children, or parents.");
+            } else {
+                showToast(`✅ ${name} added to the family tree!`);
+            }
+            
+            // Reset form
+            resetForm();
+        });
+
+        // ============ CALCULATE POSITION ============
+        function calculatePosition(member) {
+            const centerX = 400;
+            const startY = 100;
+
+            // If root or first member
+            if (member.relation === 'root' || familyMembers.length === 0) {
+                member.x = centerX;
+                member.y = startY;
+                return;
+            }
+
+            const connectedTo = familyMembers.find(m => m.id === member.connectedTo);
+            if (!connectedTo) return;
+
+            switch(member.relation) {
+                case 'spouse':
+                    member.x = connectedTo.x + NODE_SPACING;
+                    member.y = connectedTo.y;
+                    break;
+                    
+                case 'child':
+                    // Find all children of this parent
+                    const children = familyMembers.filter(m => 
+                        m.connectedTo === member.connectedTo && m.relation === 'child'
+                    );
+                    
+                    // Position children in a row below parent
+                    const childCount = children.length + 1;
+                    const startX = connectedTo.x - ((childCount - 1) * NODE_SPACING / 2);
+                    member.x = startX + (children.length * NODE_SPACING);
+                    member.y = connectedTo.y + LEVEL_SPACING;
+                    break;
+                    
+                case 'parent':
+                    // Find all parents of this person
+                    const parents = familyMembers.filter(m => 
+                        m.connectedTo === member.connectedTo && m.relation === 'parent'
+                    );
+                    
+                    const parentCount = parents.length + 1;
+                    const parentStartX = connectedTo.x - ((parentCount - 1) * NODE_SPACING / 2);
+                    member.x = parentStartX + (parents.length * NODE_SPACING);
+                    member.y = connectedTo.y - LEVEL_SPACING;
+                    break;
+                    
+                case 'sibling':
+                    // Find all siblings
+                    const siblings = familyMembers.filter(m => 
+                        m.connectedTo === member.connectedTo && m.relation === 'sibling'
+                    );
+                    
+                    const siblingCount = siblings.length + 1;
+                    const siblingStartX = connectedTo.x - ((siblingCount - 1) * NODE_SPACING / 2);
+                    member.x = siblingStartX + (siblings.length * NODE_SPACING);
+                    member.y = connectedTo.y;
+                    break;
+                    
+                default:
+                    member.x = connectedTo.x + NODE_SPACING;
+                    member.y = connectedTo.y;
+            }
+        }
+
+        // ============ RENDER TREE ============
+        function renderTree() {
+            const treeWrapper = document.getElementById('treeWrapper');
+            treeWrapper.innerHTML = '';
+            
+            // Draw lines first (behind nodes)
+            familyMembers.forEach(member => {
+                if (member.connectedTo) {
+                    const connectedMember = familyMembers.find(m => m.id === member.connectedTo);
+                    if (connectedMember) {
+                        drawConnectionLine(connectedMember, member);
+                    }
+                }
+            });
+            
+            // Draw nodes
+            familyMembers.forEach(member => {
+                drawTreeNode(member);
+            });
+            
+            // Apply current zoom level
+            applyZoom();
+        }
+
+        // ============ DRAW TREE NODE ============
+        function drawTreeNode(member) {
+            const treeWrapper = document.getElementById('treeWrapper');
+            const node = document.createElement('div');
+            node.className = `tree-node ${member.gender}`;
+            node.style.left = `${member.x}px`;
+            node.style.top = `${member.y}px`;
+            
+            // Calculate age from DOB if needed
+            const ageText = member.age ? `${member.age} years` : '';
+            
+            node.innerHTML = `
+                <img src="${member.photo}" class="node-photo" alt="${member.name}">
+                <div class="node-name">${member.name}</div>
+                <div class="node-details">
+                    ${member.gender.charAt(0).toUpperCase() + member.gender.slice(1)}<br>
+                    ${ageText}<br>
+                    ${member.relation}
+                </div>
+            `;
+            
+            // Click to select
+            node.addEventListener('click', () => {
+                selectMember(member);
+            });
+            
+            treeWrapper.appendChild(node);
+        }
+
+        // ============ DRAW CONNECTION LINE ============
+        function drawConnectionLine(from, to) {
+            const treeWrapper = document.getElementById('treeWrapper');
+            const line = document.createElement('div');
+            line.className = 'tree-line';
+            
+            // Calculate line between node centers
+            const x1 = from.x + (NODE_WIDTH / 2);
+            const y1 = from.y + (NODE_HEIGHT / 2);
+            const x2 = to.x + (NODE_WIDTH / 2);
+            const y2 = to.y + (NODE_HEIGHT / 2);
+            
+            const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+            const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+            
+            line.style.width = `${length}px`;
+            line.style.height = '4px';
+            line.style.left = `${x1}px`;
+            line.style.top = `${y1}px`;
+            line.style.transform = `rotate(${angle}deg)`;
+            line.style.transformOrigin = '0 0';
+            
+            treeWrapper.appendChild(line);
+        }
+
+        // ============ SELECT MEMBER ============
+        function selectMember(member) {
+            selectedMember = member;
+            document.getElementById('connectTo').value = member.id;
+            
+            // Highlight selected node
+            document.querySelectorAll('.tree-node').forEach(node => {
+                node.style.boxShadow = 'none';
+            });
+            
+            const nodes = document.querySelectorAll('.tree-node');
+            nodes.forEach(node => {
+                if (node.querySelector('.node-name').textContent === member.name) {
+                    node.style.boxShadow = '0 0 0 4px gold, 0 20px 40px rgba(0,0,0,0.2)';
+                }
+            });
+            
+            showToast(`Selected ${member.name}. Next person will connect here.`);
+        }
+
+        // ============ PHOTO UPLOAD ============
+        document.getElementById('photo').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('photoPreview');
+                    const uploadText = document.querySelector('.upload-text');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    uploadText.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // ============ RESET FORM ============
+        function resetForm() {
+            document.getElementById('familyForm').reset();
+            document.getElementById('photoPreview').style.display = 'none';
+            document.querySelector('.upload-text').style.display = 'block';
+            updateConnectToOptions();
+        }
+
+        // ============ TREE CONTROLS ============
+        function zoomIn() {
+            if (treeScale < 2) {
+                treeScale += 0.1;
+                applyZoom();
+                showToast(`Zoom: ${Math.round(treeScale * 100)}%`);
+            }
+        }
+
+        function zoomOut() {
+            if (treeScale > 0.5) {
+                treeScale -= 0.1;
+                applyZoom();
+                showToast(`Zoom: ${Math.round(treeScale * 100)}%`);
+            }
+        }
+
+        function applyZoom() {
+            document.querySelectorAll('.tree-node').forEach(node => {
+                node.style.transform = `scale(${treeScale})`;
+            });
+        }
+
+        function resetTree() {
+            treeScale = 1;
+            applyZoom();
+            showToast("Tree view reset");
+        }
+
+        function saveTree() {
+            if (familyMembers.length === 0) {
+                showToast("No family members to save!", true);
+                return;
+            }
+            
+            const data = {
+                family: familyMembers,
+                date: new Date().toISOString(),
+                totalMembers: familyMembers.length
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `family-tree-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            
+            URL.revokeObjectURL(url);
+            showToast("Family tree saved successfully!");
+        }
+
+        // ============ INITIALIZE ON LOAD ============
+        window.onload = init;
+    </script>
+</body>
+</html>
