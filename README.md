@@ -1,22 +1,3 @@
-# Navigate to your project folder in the terminal/command prompt
-cd path/to/your/project
-
-# Initialize a Git repository
-git init
-
-# Add all your files
-git add .
-
-# Create your first commit
-git commit -m "Initial commit: Family Tree Builder"
-
-# Connect your local project to the GitHub repository
-# (Replace the URL with your own repository's link)
-git remote add origin https://github.com/YOUR_USERNAME/family-tree-builder.git
-
-# Push your code to GitHub
-git branch -M main
-git push -u origin main
 
 # 🌳 Family Tree Builder
 
@@ -40,4 +21,5 @@ You can view the live application here: [https://github.com/madhurissonawane13/F
 1. Clone this repository: `git clone https://github.com/YOUR_USERNAME/family-tree-builder.git`
 
 2. Open the `index.html` file in your web browser.
+
 
