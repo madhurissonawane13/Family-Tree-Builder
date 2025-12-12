@@ -29,7 +29,7 @@ A modern, interactive web application to visually create and manage family trees
 - Clean, responsive user interface
 
 ## 🚀 Live Demo
-You can view the live application here: [Your GitHub Pages Link]
+You can view the live application here: [https://github.com/madhurissonawane13/Family-Tree-Builder]
 
 ## 🛠️ Built With
 - HTML5, CSS3, Vanilla JavaScript
@@ -38,4 +38,5 @@ You can view the live application here: [Your GitHub Pages Link]
 
 ## 📁 How to Run Locally
 1. Clone this repository: `git clone https://github.com/YOUR_USERNAME/family-tree-builder.git`
+
 2. Open the `index.html` file in your web browser.
