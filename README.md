@@ -32,7 +32,7 @@ A modern, interactive web application to visually create and manage family trees
 You can view the live application here: [https://github.com/madhurissonawane13/Family-Tree-Builder]
 
 ## 🛠️ Built With
-- HTML5, CSS3, Vanilla JavaScript
+- HTML5, CSS3, JavaScript
 - CSS Grid & Flexbox for layout
 - Font Awesome for icons
 
@@ -40,3 +40,4 @@ You can view the live application here: [https://github.com/madhurissonawane13/F
 1. Clone this repository: `git clone https://github.com/YOUR_USERNAME/family-tree-builder.git`
 
 2. Open the `index.html` file in your web browser.
+
